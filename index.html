@@ -4,91 +4,138 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>$LUM AI High-Five Clicker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body { margin:0; padding:0; background: linear-gradient(135deg, #0a0a2a, #1a0033); color:white; font-family:Arial, sans-serif; text-align:center; overflow:hidden; }
-    .container { max-width: 480px; margin:0 auto; padding:20px; }
-    .header { font-size:28px; font-weight:bold; margin:15px 0; text-shadow: 0 0 15px #00ffff; }
-    #game { position:relative; cursor:pointer; margin:20px auto; width:320px; height:320px; }
-    #meme { width:100%; height:100%; border-radius:30px; box-shadow:0 0 40px #ffd700; }
-    .points { font-size:42px; font-weight:bold; margin:10px 0; color:#ffd700; text-shadow:0 0 20px #ffd700; }
-    button { background:#00ffff; color:#000; border:none; padding:15px 30px; margin:10px; border-radius:50px; font-size:18px; font-weight:bold; cursor:pointer; box-shadow:0 0 20px #00ffff; }
-    .info { font-size:14px; margin:20px 0; opacity:0.9; }
+    body { background: linear-gradient(135deg, #0f0a2e, #1a0033); }
+    .neon-text { text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
+    .meme-container { transition: transform 0.1s ease; }
+    .floating { position: absolute; color: #ffd700; font-weight: bold; font-size: 24px; animation: floatUp 1.2s ease forwards; pointer-events: none; }
+    @keyframes floatUp { to { transform: translateY(-120px); opacity: 0; } }
   </style>
 </head>
-<body>
-  <div class="container">
-    <div class="header">$LUM AI High-Five Clicker</div>
-    <div class="points" id="points">0 History Points</div>
-    
-    <div id="game">
-      <img id="meme" src="https://your-image-link-here.jpg" alt="$LUM AI High-Five">
+<body class="text-white min-h-screen flex items-center justify-center">
+  <div class="max-w-md w-full mx-auto p-6">
+    <div class="text-center mb-6">
+      <h1 class="text-4xl font-bold neon-text">$LUM AI HIGH-FIVE</h1>
+      <p class="text-cyan-400 text-sm">First AI-to-AI Artifact Clicker</p>
     </div>
 
-    <button onclick="tap()">HIGH-FIVE! +10</button>
-    <button onclick="watchAd()">Watch Rewarded Ad (+500 Points)</button>
+    <div class="bg-black/40 backdrop-blur-xl rounded-3xl p-6 border border-cyan-500/30">
+      <div class="flex justify-between text-sm mb-4">
+        <div>History Points: <span id="points" class="font-bold text-3xl text-yellow-400">0</span></div>
+        <div class="flex items-center gap-2">
+          🔥 Streak: <span id="streak" class="font-bold">3</span>
+        </div>
+      </div>
 
-    <div class="info">
-      Daily streak: <span id="streak">0</span> days<br>
-      Top 5 this week get real $LUM rewards from ad revenue!
+      <div id="game" class="meme-container relative mx-auto cursor-pointer w-72 h-72 rounded-3xl overflow-hidden border-4 border-yellow-400 shadow-2xl">
+        <img id="meme" src="https://your-meme-image-link-here.jpg" class="w-full h-full object-cover" alt="$LUM">
+      </div>
+
+      <div class="text-center mt-2 text-xs text-cyan-300">TAP THE ROBOTS TO HIGH-FIVE</div>
     </div>
 
-    <button onclick="showLeaderboard()">Leaderboard</button>
-    <button onclick="showInfo()">How Revenue is Split</button>
+    <div class="flex gap-4 mt-8">
+      <button onclick="tap()" 
+              class="flex-1 bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold py-5 rounded-2xl text-xl shadow-lg active:scale-95 transition">
+        HIGH-FIVE! +10
+      </button>
+      
+      <button onclick="watchAd()" 
+              class="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-5 rounded-2xl text-xl shadow-lg active:scale-95 transition">
+        Watch Ad<br><span class="text-xs">+500 Points</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 mt-6">
+      <button onclick="showUpgrades()" 
+              class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-sm font-medium">
+        🛠️ Upgrades
+      </button>
+      <button onclick="showLeaderboard()" 
+              class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-sm font-medium">
+        🏆 Leaderboard
+      </button>
+    </div>
+
+    <button onclick="showInfo()" 
+            class="w-full mt-6 text-xs py-3 bg-white/5 hover:bg-white/10 rounded-2xl">
+      💰 How Revenue is Split (60% to Top 5 Players)
+    </button>
   </div>
 
   <script>
-    let points = 0;
-    let streak = 3; // example starting streak
+    let points = 12480;
+    let streak = 5;
 
     const pointsEl = document.getElementById('points');
     const streakEl = document.getElementById('streak');
+    const meme = document.getElementById('meme');
+    const game = document.getElementById('game');
 
-    function updatePoints() {
-      pointsEl.textContent = Math.floor(points) + " History Points";
+    function updateUI() {
+      pointsEl.textContent = Math.floor(points).toLocaleString();
+      streakEl.textContent = streak;
     }
 
-    function tap() {
+    function createFloatingText(x, y) {
+      const float = document.createElement('div');
+      float.className = 'floating';
+      float.textContent = '+10';
+      float.style.left = x + 'px';
+      float.style.top = y + 'px';
+      game.appendChild(float);
+      setTimeout(() => float.remove(), 1500);
+    }
+
+    function tap(e) {
       points += 10;
-      updatePoints();
-      // simple animation
-      const meme = document.getElementById('meme');
-      meme.style.transform = 'scale(1.1)';
-      setTimeout(() => { meme.style.transform = 'scale(1)'; }, 100);
+      updateUI();
+
+      // Tap animation
+      meme.style.transform = 'scale(0.9)';
+      setTimeout(() => { meme.style.transform = 'scale(1)'; }, 80);
+
+      // Floating points
+      const rect = game.getBoundingClientRect();
+      const x = Math.random() * rect.width;
+      const y = Math.random() * rect.height * 0.6;
+      createFloatingText(x, y);
     }
 
     function watchAd() {
-      alert("🎟️ Rewarded Ad would play here (Monetag/RichAds integration).\nIn real version you get +500 points after watching!");
+      alert("🎟️ Rewarded Ad would play here (in real version you get +500 points after watching).");
       points += 500;
-      updatePoints();
+      updateUI();
+    }
+
+    function showUpgrades() {
+      alert("🛠️ Upgrades Shop (coming in next update)\n\n• Auto High-Five Bot (+15/sec) - 5,000 pts\n• Double Tap Multiplier - 12,000 pts\n• Golden Robot Skin - 25,000 pts");
     }
 
     function showLeaderboard() {
-      alert("🏆 Leaderboard (this week)\n1. @player1 — 42,800 pts\n2. @player2 — 31,200 pts\n3. @player3 — 28,900 pts\n4. @player4 — 25,100 pts\n5. @player5 — 22,300 pts\n\nTop 5 get $LUM rewards every Sunday!");
+      alert("🏆 This Week's Leaderboard\n\n1. @degengod42 — 84,920 pts\n2. @michaelhurri — 67,300 pts\n3. @basefren — 51,800 pts\n4. @aiholder — 44,200 pts\n5. @lumlegend — 39,100 pts\n\nTop 5 get real $LUM from ad revenue every Sunday!");
     }
 
     function showInfo() {
-      alert("💰 How $LUM Clicker Makes Money & Gives Back\n\n• Rewarded ads = revenue\n• 60% → Weekly $LUM rewards to Top 5 players\n• 20% → Builder fee (michael keeps this transparent)\n• 20% → Game fund / future $LUM burns\n\nFully community-built for $LUM holders! No team, no BS.");
+      alert("💰 $LUM Clicker Revenue Split (100% transparent)\n\n• 60% → Weekly $LUM rewards to Top 5 players\n• 20% → Builder fee (michael - community built)\n• 20% → Game fund / future $LUM burns\n\nBuilt for the $LUM community by a real holder.");
     }
 
-    // Telegram WebApp ready
+    // Make the whole meme area clickable
+    game.addEventListener('click', tap);
+
+    // Telegram setup
     window.Telegram.WebApp.ready();
     window.Telegram.WebApp.expand();
 
-    // Load saved points
-    if (localStorage.getItem('lumPoints')) {
-      points = parseFloat(localStorage.getItem('lumPoints'));
-    }
-    updatePoints();
-    streakEl.textContent = streak;
+    // Initial load
+    updateUI();
 
-    // Save points every 10 seconds
+    // Auto-save
     setInterval(() => {
       localStorage.setItem('lumPoints', points);
     }, 10000);
-
-    // Replace the image src with your real meme URL
-    console.log("Replace the image src in the code with your hosted meme URL");
   </script>
 </body>
 </html>
