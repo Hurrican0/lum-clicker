@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$LUM AI High-Five Clicker</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { margin:0; padding:0; background: linear-gradient(135deg, #0a0a2a, #1a0033); color:white; font-family:Arial, sans-serif; text-align:center; overflow:hidden; }
+    .container { max-width: 480px; margin:0 auto; padding:20px; }
+    .header { font-size:28px; font-weight:bold; margin:15px 0; text-shadow: 0 0 15px #00ffff; }
+    #game { position:relative; cursor:pointer; margin:20px auto; width:320px; height:320px; }
+    #meme { width:100%; height:100%; border-radius:30px; box-shadow:0 0 40px #ffd700; }
+    .points { font-size:42px; font-weight:bold; margin:10px 0; color:#ffd700; text-shadow:0 0 20px #ffd700; }
+    button { background:#00ffff; color:#000; border:none; padding:15px 30px; margin:10px; border-radius:50px; font-size:18px; font-weight:bold; cursor:pointer; box-shadow:0 0 20px #00ffff; }
+    .info { font-size:14px; margin:20px 0; opacity:0.9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">$LUM AI High-Five Clicker</div>
+    <div class="points" id="points">0 History Points</div>
+    
+    <div id="game">
+      <img id="meme" src="https://your-image-link-here.jpg" alt="$LUM AI High-Five">
+    </div>
+
+    <button onclick="tap()">HIGH-FIVE! +10</button>
+    <button onclick="watchAd()">Watch Rewarded Ad (+500 Points)</button>
+
+    <div class="info">
+      Daily streak: <span id="streak">0</span> days<br>
+      Top 5 this week get real $LUM rewards from ad revenue!
+    </div>
+
+    <button onclick="showLeaderboard()">Leaderboard</button>
+    <button onclick="showInfo()">How Revenue is Split</button>
+  </div>
+
+  <script>
+    let points = 0;
+    let streak = 3; // example starting streak
+
+    const pointsEl = document.getElementById('points');
+    const streakEl = document.getElementById('streak');
+
+    function updatePoints() {
+      pointsEl.textContent = Math.floor(points) + " History Points";
+    }
+
+    function tap() {
+      points += 10;
+      updatePoints();
+      // simple animation
+      const meme = document.getElementById('meme');
+      meme.style.transform = 'scale(1.1)';
+      setTimeout(() => { meme.style.transform = 'scale(1)'; }, 100);
+    }
+
+    function watchAd() {
+      alert("🎟️ Rewarded Ad would play here (Monetag/RichAds integration).\nIn real version you get +500 points after watching!");
+      points += 500;
+      updatePoints();
+    }
+
+    function showLeaderboard() {
+      alert("🏆 Leaderboard (this week)\n1. @player1 — 42,800 pts\n2. @player2 — 31,200 pts\n3. @player3 — 28,900 pts\n4. @player4 — 25,100 pts\n5. @player5 — 22,300 pts\n\nTop 5 get $LUM rewards every Sunday!");
+    }
+
+    function showInfo() {
+      alert("💰 How $LUM Clicker Makes Money & Gives Back\n\n• Rewarded ads = revenue\n• 60% → Weekly $LUM rewards to Top 5 players\n• 20% → Builder fee (michael keeps this transparent)\n• 20% → Game fund / future $LUM burns\n\nFully community-built for $LUM holders! No team, no BS.");
+    }
+
+    // Telegram WebApp ready
+    window.Telegram.WebApp.ready();
+    window.Telegram.WebApp.expand();
+
+    // Load saved points
+    if (localStorage.getItem('lumPoints')) {
+      points = parseFloat(localStorage.getItem('lumPoints'));
+    }
+    updatePoints();
+    streakEl.textContent = streak;
+
+    // Save points every 10 seconds
+    setInterval(() => {
+      localStorage.setItem('lumPoints', points);
+    }, 10000);
+
+    // Replace the image src with your real meme URL
+    console.log("Replace the image src in the code with your hosted meme URL");
+  </script>
+</body>
+</html>
